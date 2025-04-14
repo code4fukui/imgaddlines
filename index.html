@@ -1,0 +1,113 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><link rel="icon" href="data:">
+<title>imgaddlines</title>
+</head>
+<body>
+<h1>imgaddlines</h1>
+<div>drop an image file to add lines</div>
+<input type=range id=range min=1 max=50 value=23 step=0.01><br>
+<input type=range id=range2 min=1 max=50 value=7><br>
+<input type=range id=range3 min=-1 max=50 value=-1 step=0.01><br>
+<input type=checkbox id=chkhori><br>
+<div id=imgc></div>
+<button id=btnsave>save</button>
+<hr>
+<a href=https://github.com/code4fukui/imgaddlines/>src on GitHub</a>
+
+<style>
+body {
+  height: 100vh;
+  text-align: center;
+}
+img {
+  width: 60vw;
+  margin: 10vw;
+  z-index: -1;
+  position: relative;
+}
+input[type=range] {
+  width: 80vw;
+}
+</style>
+
+<script type="module">
+import { setDropImageFileListener } from "https://js.sabae.cc/setDropImageFileListener.js";
+
+let img = null;
+let canvas = null;
+
+const makeImage = (img, skip, width, offset = -1, flghori) => {
+  skip = parseFloat(skip);
+  width = parseFloat(width);
+  offset = parseFloat(offset);
+  console.log({ skip, width });
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+
+  canvas.width = img.naturalWidth;
+  canvas.height = img.naturalHeight;
+  ctx.drawImage(img, 0, 0);
+  ctx.strokeStyle = "white";
+  ctx.lineWidth = width;
+  if (!flghori) {
+    for (let i = offset; i < canvas.width + skip; i += skip) {
+      ctx.beginPath();
+      ctx.moveTo(i, 0);
+      ctx.lineTo(i, img.naturalHeight);
+      ctx.stroke();
+    }
+  } else {
+    for (let i = offset; i < canvas.height + skip; i += skip) {
+      ctx.beginPath();
+      ctx.moveTo(0, i);
+      ctx.lineTo(img.naturalWidth, i);
+      ctx.stroke();
+    }
+  }
+  return canvas;
+};
+const makeCanvas = () => {
+  const n = range.value;
+  const n2 = range2.value;
+  const n3 = range3.value;
+  const flg = chkhori.checked;
+  const canvas = makeImage(img, n, n2, n3, flg);
+  return canvas;
+};
+const setImage = () => {
+  if (!img) return;
+  const canvas = makeCanvas();
+  imgc.innerHTML = "";
+  imgc.appendChild(canvas);
+};
+
+range.oninput = range2.oninput = range3.oninput = chkhori.oninput = () => {
+  setImage();
+};
+
+setDropImageFileListener(document.body, async (image) => {
+  img = image;
+  setImage();
+});
+
+
+img = new Image();
+img.src = "sample.jpg";
+img.onload = () => {
+  range.oninput();
+};
+
+
+const saveCanvas = async (imgpath) => {
+  const link = document.createElement('a');
+  link.download = imgpath;
+};
+
+btnsave.onclick = () => {
+  const canvas = makeCanvas();
+  const link = document.createElement('a');
+  link.download = 'filtered-image.png';
+  link.href = canvas.toDataURL();
+  link.click();
+};
+
+</script>
