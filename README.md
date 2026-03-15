@@ -1,5 +1,7 @@
 # imgaddlines
 
+> 日本語のREADMEはこちらです: [README.ja.md](README.ja.md)
+
 A web-based tool to add customizable lines to images.
 
 ## Demo
