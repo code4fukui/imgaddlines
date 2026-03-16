@@ -19,4 +19,4 @@ https://code4fukui.github.io/imgaddlines/
 4. Click the "Save" button to download the modified image
 
 ## License
-This project is licensed under the MIT License.
+MIT License — see [LICENSE](LICENSE).
